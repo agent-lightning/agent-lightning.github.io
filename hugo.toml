@@ -32,7 +32,12 @@ buildExpired = false
   # Social icons (optional, fill in your own)
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/agent-lightning"
+    url = "https://github.com/microsoft/agent-lightning"
+
+  [[params.socialIcons]]
+    name = "discord"
+    url = "https://discord.com/invite/RYk7CdvDR7"
+
 
 # Main menu
 [menu]
