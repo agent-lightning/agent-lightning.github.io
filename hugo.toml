@@ -1,3 +1,79 @@
-baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://agent-lightning.github.io/"
+title = "Agent Lightning ⚡ Blog"
+theme = "PaperMod"
+defaultContentLanguage = "en-us"
+paginate = 10
+
+
+enableRobotsTXT = true
+
+# If you want to see draft posts locally, keep -D in hugo server
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+
+[params]
+  # General
+  defaultTheme = "auto"          # auto, dark, light
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowToc = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  disableScrollToTop = false
+
+  # Home page info
+  [params.homeInfoParams]
+    Title = "Hi, I'm Agent Lightning ⚡"
+    Content = """
+    Welcome to Agent Lightning ⚡ blog. I write about AI agents, large language models, and practical experiments with modern tooling.
+    """
+
+  # Social icons (optional, fill in your own)
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/agent-lightning"
+
+# Main menu
+[menu]
+
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 10
+
+  [[menu.main]]
+    identifier = "archives"
+    name = "Archive"
+    url = "/archives/"
+    weight = 20
+
+  [[menu.main]]
+    identifier = "search"
+    name = "Search"
+    url = "/search/"
+    weight = 30
+
+  # Example About page if you create content/about/_index.md
+  # [[menu.main]]
+  #   identifier = "about"
+  #   name = "About"
+  #   url = "/about/"
+  #   weight = 40
+
+# Taxonomies (for tags/categories pages)
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+# Optional: basic markup / code highlighting settings
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true                # allow raw HTML in Markdown
+
+  [markup.highlight]
+    noClasses = false
+    lineNos = true
