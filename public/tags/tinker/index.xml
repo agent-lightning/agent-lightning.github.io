@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tinker on Agent Lightning ⚡ Blog</title>
+    <link>https://agent-lightning.github.io/tags/tinker/</link>
+    <description>Recent content in Tinker on Agent Lightning ⚡ Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 19 Nov 2025 00:00:00 +0800</lastBuildDate>
+    <atom:link href="https://agent-lightning.github.io/tags/tinker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tinker X Agent Lightning</title>
+      <link>https://agent-lightning.github.io/posts/tinker/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/posts/tinker/</guid>
+      <description>&lt;h1 id=&#34;tuning-any-ai-agent-with-tinker-x-agent-lightning&#34;&gt;Tuning ANY AI agent with Tinker X Agent-lightning&lt;/h1&gt;&#xA;&lt;p&gt;&lt;em&gt;Yuge Zhang&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;em&gt;Nov. 2025&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;Tinker is the first product built by an all-star company called &lt;strong&gt;Thinking Machine Lab&lt;/strong&gt;, whose team members come from leading organizations such as OpenAI. Notable members include former OpenAI CTO &lt;strong&gt;Mira Murati&lt;/strong&gt;; &lt;strong&gt;John Schulman&lt;/strong&gt;, the first author of PPO; &lt;strong&gt;Barret Zoph&lt;/strong&gt;, a leading scientist in AutoML (the area I previously worked in); and well-known Asian researchers like &lt;strong&gt;Danqi Chen&lt;/strong&gt; and &lt;strong&gt;Lilian Weng&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -2,22 +2,53 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:10701/</loc>
+    <loc>https://agent-lightning.github.io/tags/agent-lightning/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/ai-agent/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/fine-tuning/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/posts/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/reinforcement-learning/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/tinker/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/posts/tinker/</loc>
+    <lastmod>2025-11-19T00:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/agent-rl/</loc>
     <lastmod>2025-11-18T01:13:13+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:10701/posts/no-more-retokenization-drift/</loc>
+    <loc>https://agent-lightning.github.io/posts/no-more-retokenization-drift/</loc>
     <lastmod>2025-11-18T01:13:13+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:10701/posts/</loc>
+    <loc>https://agent-lightning.github.io/tags/openai-compatible-api/</loc>
     <lastmod>2025-11-18T01:13:13+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:10701/posts/hello-world/</loc>
+    <loc>https://agent-lightning.github.io/tags/retokenization-drift/</loc>
+    <lastmod>2025-11-18T01:13:13+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/tags/vllm/</loc>
+    <lastmod>2025-11-18T01:13:13+08:00</lastmod>
+  </url><url>
+    <loc>https://agent-lightning.github.io/posts/hello-world/</loc>
     <lastmod>2024-06-15T12:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:10701/about/</loc>
+    <loc>https://agent-lightning.github.io/about/</loc>
   </url><url>
-    <loc>http://localhost:10701/categories/</loc>
-  </url><url>
-    <loc>http://localhost:10701/tags/</loc>
+    <loc>https://agent-lightning.github.io/categories/</loc>
   </url>
 </urlset>

@@ -1,11 +1,75 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Agent Lightning ⚡ Blog</title>
-    <link>http://localhost:10701/tags/</link>
+    <link>https://agent-lightning.github.io/tags/</link>
     <description>Recent content in Tags on Agent Lightning ⚡ Blog</description>
-    <generator>Hugo -- 0.152.2</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:10701/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 19 Nov 2025 00:00:00 +0800</lastBuildDate>
+    <atom:link href="https://agent-lightning.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Agent Lightning</title>
+      <link>https://agent-lightning.github.io/tags/agent-lightning/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/agent-lightning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ai Agent</title>
+      <link>https://agent-lightning.github.io/tags/ai-agent/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/ai-agent/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Fine-Tuning</title>
+      <link>https://agent-lightning.github.io/tags/fine-tuning/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/fine-tuning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Reinforcement Learning</title>
+      <link>https://agent-lightning.github.io/tags/reinforcement-learning/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/reinforcement-learning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Tinker</title>
+      <link>https://agent-lightning.github.io/tags/tinker/</link>
+      <pubDate>Wed, 19 Nov 2025 00:00:00 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/tinker/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Agent Rl</title>
+      <link>https://agent-lightning.github.io/tags/agent-rl/</link>
+      <pubDate>Tue, 18 Nov 2025 01:13:13 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/agent-rl/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Openai-Compatible Api</title>
+      <link>https://agent-lightning.github.io/tags/openai-compatible-api/</link>
+      <pubDate>Tue, 18 Nov 2025 01:13:13 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/openai-compatible-api/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Retokenization Drift</title>
+      <link>https://agent-lightning.github.io/tags/retokenization-drift/</link>
+      <pubDate>Tue, 18 Nov 2025 01:13:13 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/retokenization-drift/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Vllm</title>
+      <link>https://agent-lightning.github.io/tags/vllm/</link>
+      <pubDate>Tue, 18 Nov 2025 01:13:13 +0800</pubDate>
+      <guid>https://agent-lightning.github.io/tags/vllm/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
