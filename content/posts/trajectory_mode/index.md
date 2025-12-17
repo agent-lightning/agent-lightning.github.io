@@ -1,5 +1,5 @@
 +++
-date = '2025-11-28T00:00:00+08:00'
+date = '2025-12-17T00:00:00+08:00'
 draft = false
 title = 'Adopting the Trajectory Aggregation Mode for Faster Training'
 tags = ['agent rl', 'reinforcement learning', 'agent lightning', 'ai agent']
@@ -8,7 +8,7 @@ tags = ['agent rl', 'reinforcement learning', 'agent lightning', 'ai agent']
 # Adopting the Trajectory Aggregation Mode for Faster Training
 
 *Agent Lightning (AGL) Team*
-*Date: Nov. 2025*
+*Date: Dec. 2025*
 
 ## 1. Introduction
 
@@ -79,7 +79,7 @@ Because the data structure differs from transition mode, you must explicitly set
 * `trajectory_max_prompt_length`
 * `trajectory_max_response_length`
 
-The standard `max_prompt_length` and `max_response_length` parameters **still remain effective**. They continue to constrain the input/output lengths of *single turns* during the inference/rollout phase. The new `trajectory_*` parameters constrain the final concatenated training sample. A good rule of thumb is to set `trajectory_max_response_length` to approximately N_{turns} \times (L_{response} + L_{prompt}).
+The standard `max_prompt_length` and `max_response_length` parameters **still remain effective**. They continue to constrain the input/output lengths of *single turns* during the inference/rollout phase. The new `trajectory_*` parameters constrain the final concatenated training sample. A good rule of thumb is to set `trajectory_max_response_length` to approximately $N_{turns} \times (L_{response} + L_{prompt}$).
 
 ![](./prompt_length_comparison.jpg)
 
@@ -105,6 +105,7 @@ The primary obstacle in implementing Trajectory Mode is the failure of **Prefix 
 
 However, in practice, the token IDs stored during the rollout (inference) often do not match the token IDs produced when the full history is re-tokenized for training. This is because the mapping from `String` \to `Token IDs` is not bijective; it is context-dependent. The cycle of **ID (Generation) \to String (Detokenization) \to ID (Retokenization)** introduces drift.
 
+![](./retokenization_cycle.jpg)
 
 ### 3.1 Contextual Retokenization Discrepancy & BPE Artifacts (Retoken Mismatch)
 
