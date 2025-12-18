@@ -114,8 +114,8 @@ Tokenization algorithms (like BPE) merge characters based on frequency and conte
 **Sub-Word Split Variability**
 
 * **The "Think Tag" Fragmentation:** This issue is particularly prevalent in models that are instructed via prompts to use structural tags (e.g., `<think>...</think>`) for Chain-of-Thought reasoning, but **do not** possess these tags as atomic special tokens in their vocabulary.
-* *Generation:* The model generates the tag as a sequence of separate standard tokens (e.g., `["<", "think", ">"]`).
-* *Retokenization:* When the full history is processed as a block, the tokenizer's BPE algorithm often aggregates these characters differently (e.g., splitting as `["<th", "ink", ">"]`) or merging them with adjacent punctuation. Since the sequence of Token IDs changes between generation and re-tokenization, the prefix matcher fails to locate the response boundaries.
+  * *Generation:* The model generates the tag as a sequence of separate standard tokens (e.g., `["<", "think", ">"]`).
+  * *Retokenization:* When the full history is processed as a block, the tokenizer's BPE algorithm often aggregates these characters differently (e.g., splitting as `["<th", "ink", ">"]`) or merging them with adjacent punctuation. Since the sequence of Token IDs changes between generation and re-tokenization, the prefix matcher fails to locate the response boundaries.
 
 * **The "HAVING" Example:** During generation, a model might output the word "HAVING" as two separate tokens: `H` (ID: 35) + `AVING` (ID: 482). However, when this text is detokenized into the string "HAVING" and then re-tokenized as part of a prompt, the tokenizer might prefer the split `HAV` (ID: 982) + `ING` (ID: 27).
 
@@ -144,7 +144,69 @@ When responses are concatenated with subsequent prompts, the tokenizer may merge
 * **The Dilemma:** This single token technically contains part of the *Response* (should be mask=1) and part of the *Template* (should be mask=0). It is impossible to correctly assign a binary mask to this "hybrid" token.
 
 
-### 3.3 Agent Post-processing Modifications (Others Mismatch)
+### 3.3 Message Formatting and Structural Alignment (Others Mismatch)
+
+A critical failure point in Trajectory Mode occurs when the agent logic appends response content directly to a raw string. This practice often disrupts the Chat Template's structural markers, leading to a mismatch between the inference rollout and the training prompt.
+
+**Original Implementation: Manual String Concatenation**
+In the example below, response content is directly added to a string. This bypasses the Chat Template for intermediate turns, causing the "Role" headers to disappear or become misaligned.
+
+```python
+rollout_content: str = ""
+
+while turn_id < self.max_turns and not finished_flag:
+    turn_id += 1
+
+    turn_response = llm_client.chat.completions.create(
+        model=llm.model,
+        # ISSUE: Manually concatenating strings ignores the Chat Template structure
+        messages=[{"role": "user", "content": prompt + rollout_content}],
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
+
+    rollout_content += turn_response
+    turn_env_feedback = execute_response(turn_response)
+    rollout_content += turn_env_feedback
+
+```
+
+**Resulting Discrepancy:**
+As shown below, the direct string addition results in a missing message header in the prompt for the next turn, making it impossible for the system to merge the traces.
+
+* **Previous Turn Response:** Ends with template markers like `<|eot_id|><|start_header_id|>assistant<|end_header_id|>`.
+* **Next Turn Prompt:** The headers are missing because they were never structured as discrete messages, leading to a mismatch in the previous turn response part.
+
+
+**Recommended Implementation: Cumulative Message List**
+To ensure perfect alignment for merging, you should manage the conversation using a structured list of message dictionaries. This allows the Chat Template to consistently apply headers and special tokens (like EOS/BOS) at every turn.
+
+```python
+# RECOMMENDED: Maintain a structured history
+hist_messages: List[Dict[str, Any]] = [{"role": "user", "content": prompt}]
+
+while turn_id < self.max_turns and not finished_flag:
+    turn_id += 1
+
+    turn_response = llm_client.chat.completions.create(
+        model=llm.model,
+        messages=hist_messages, # The template is applied correctly to the list
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
+    
+    # Append structured roles to maintain template integrity
+    hist_messages.append({"role": "assistant", "content": turn_response})
+    turn_env_feedback = execute_response(turn_response)
+    hist_messages.append({"role": "user", "content": turn_env_feedback})
+
+```
+
+**Resulting Alignment:**
+By using this method, the response part from the previous turn and the prompt part in the subsequent turn maintain consistent template markers (e.g., `<|eot_id|><|start_header_id|>...`), enabling successful **Prefix Matching** and trajectory merging.
+
+
+### 3.4 Agent Post-processing Modifications (Others Mismatch)
 
 Many production agents employ post-processing logic to refine outputs before presenting them to the environment or user.
 
@@ -152,7 +214,7 @@ Many production agents employ post-processing logic to refine outputs before pre
 * **Result:** The stored rollout data (full generation including thoughts) no longer matches the prompt prefix used in the subsequent turn (truncated history). The prefix matcher looks for content that technically no longer exists in the history.
 
 
-### 3.4 Normalization Artifacts (Others Mismatch)
+### 3.5 Normalization Artifacts (Others Mismatch)
 
 Minor artifacts often invisible in standard string views can cause drift.
 
@@ -161,13 +223,14 @@ Minor artifacts often invisible in standard string views can cause drift.
 
 ---
 
-## 4. Best Practices & Recommendations
+### 4. Best Practices & Recommendations
 
-To successfully adopt Trajectory Mode and minimize data loss, we recommend the following:
+To successfully implement Trajectory Mode and minimize data loss during training, we recommend adhering to the following guidelines:
 
-1. **Configure Lengths Correctly:** Ensure `trajectory_max_prompt_length` and `trajectory_max_response_length` are sufficient to hold the *sum* of all turns in a session. Undersizing these will lead to truncation and invalid trajectories.
-2. **Audit Post-Processing:** If your agent pipeline includes post-processing (truncation, regex cleaning, formatting), ensure this logic is accounted for. If the history fed to the model differs from the raw generation log, trace merging will fail.
-3. **Monitor with Debug Mode:** If you observe a high rate of unmerged rollouts:
+1. **Maintain Structured Conversations:** Always process turns using a cumulative message format (a list of role/content dictionaries) rather than raw string concatenation. This ensures that chat template headers remain consistent across the entire trajectory. For a practical example, please refer to the recommended implementation in **[Section 3.3](#33-message-formatting-and-structural-alignment-others-mismatch)**.
+2. **Configure Lengths for Cumulative Data:** Ensure `trajectory_max_prompt_length` and `trajectory_max_response_length` are sufficient to hold the *sum* of all turns in a session. Undersizing these will lead to truncation and invalid trajectories.
+3. **Audit Post-Processing Logic:** If your agent pipeline includes post-processing (truncation, regex cleaning, formatting), ensure this logic is accounted for. If the history fed to the model differs from the raw generation log, trace merging will fail.
+4. **Monitor with Debug Mode:** If you observe a high rate of unmerged rollouts:
 * Enable `debug=True` temporarily.
 * Check `unmatch_log_dir` for patterns.
 * Look specifically for "Thinking" artifacts or specific punctuation causing BPE splits at turn boundaries.
