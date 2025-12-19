@@ -1,12 +1,12 @@
 +++
 date = '2025-12-17T00:00:00+08:00'
 draft = false
-title = 'Adopting the Trajectory Aggregation Mode for Faster Training'
+title = 'Adopting the Trajectory Level Aggregation for Faster Training'
 tags = ['agent rl', 'reinforcement learning', 'agent lightning', 'ai agent']
 math = true
 +++
 
-# Adopting the Trajectory Aggregation Mode for Faster Training
+# Adopting the Trajectory Level Aggregation for Faster Training
 
 *Agent Lightning (AGL) Team*
 *Date: Dec. 2025*
@@ -17,21 +17,21 @@ In the context of Multi-turn Agent Reinforcement Learning (RL), data collection 
 
 Currently, **Agent Lightning** supports two primary strategies for aggregating these interaction traces: **Transition Aggregation** and **Trajectory Aggregation**.
 
-### Transition Aggregation Mode
+### Transition Level Aggregation
 
-**Configuration:** (Default) `actor_rollout_ref.trace_aggregator.mode = transition`
+**Configuration:** (Default) `agentlightning.trace_aggregator.level = transition`
 
-In **Transition Aggregation Mode**, every individual response generated during a multi-turn session is treated as a distinct, independent training sample.
+In **Transition Level Aggregation**, every individual response generated during a multi-turn session is treated as a distinct, independent training sample.
 
 * **Structure:** For a single session containing N turns, this mode generates N separate training samples.
 * **Masking:** For any given sample, only the newly generated response (the current turn) is assigned a `response_mask=1` (active loss). The entire preceding conversation history is treated as frozen context (`response_mask=0`).
 * **Characteristics:** While this approach is simple to implement and robust against tokenization errors, it results in a dataset with a high sample count where each sample duplicates the shared history prefix. This leads to significant computational redundancy (re-computing KV caches for the same history multiple times) and increased memory overhead.
 
-### Trajectory Aggregation Mode
+### Trajectory Level Aggregation
 
-**Configuration:** `actor_rollout_ref.trace_aggregator.mode = trajectory`
+**Configuration:** `agentlightning.trace_aggregator.level = trajectory`
 
-**Trajectory Aggregation Mode** processes the entire multi-turn interaction session as a single, contiguous training sample. This is the standard approach in the broader landscape of Large Language Model (LLM) pre-training and fine-tuning.
+**Trajectory Level Aggregation** processes the entire multi-turn interaction session as a single, contiguous training sample. This is the standard approach in the broader landscape of Large Language Model (LLM) pre-training and fine-tuning.
 
 * **Structure:** A session with N turns is condensed into one long-sequence sample.
 * **Masking:** The sample utilizes an alternating mask pattern. User prompts and environment observations are masked (`response_mask=0`), while all agent responses within the sequence are active (`response_mask=1`).
@@ -43,7 +43,7 @@ In **Transition Aggregation Mode**, every individual response generated during a
 
 ---
 
-## 2. Trajectory Mode in Agent-Lightning
+## 2. Trajectory Level Aggregation in Agent-Lightning
 
 ### Implementation Logic
 
@@ -55,27 +55,26 @@ The foundational implementation of **Agent Lightning** was originally designed a
 
 ### Configuration Parameters
 
-To enable and control Trajectory Mode, specific parameters must be configured in your YAML file under `actor_rollout_ref`:
+To enable and control Trajectory Level Aggregation, specific parameters must be configured in your YAML file under `agentlightning`:
 
 ```yaml
-actor_rollout_ref:
-  rollout:
-    trace_aggregator:
-      mode: trajectory  # 'transition' or 'trajectory'
-      
-      # Maximum length for the prompt in first turn
-      trajectory_max_prompt_length: 2048
-      
-      # Maximum length for the cumulative agent responses in the full trajectory
-      trajectory_max_response_length: 8192
-      
-      debug: False  # Enable to diagnose trace merging failures
-      unmatch_log_dir: ./unmatch_cases  # Directory to store logs of unmatched cases
+agentlightning:
+  trace_aggregator:
+    level: trajectory  # 'transition' or 'trajectory'
+    
+    # Maximum length for the prompt in first turn
+    trajectory_max_prompt_length: 2048
+    
+    # Maximum length for the cumulative agent responses in the full trajectory
+    trajectory_max_response_length: 8192
+    
+    debug: False  # Enable to diagnose trace merging failures
+    unmatch_log_dir: ./unmatch_cases  # Directory to store logs of unmatched cases
 
 ```
 
 **Note on Length Constraints:**
-Because the data structure differs from transition mode, you must explicitly set:
+Because the data structure differs from transition level aggregation, you must explicitly set:
 
 * `trajectory_max_prompt_length`
 * `trajectory_max_response_length`
@@ -87,7 +86,7 @@ The standard `max_prompt_length` and `max_response_length` parameters **still re
 
 ### Debug Mode
 
-In Trajectory Mode, it is possible that—even if information is accumulated sequentially—the system fails to perfectly merge the rollout logs into a single training sample (reasons detailed in Section 3).
+In Trajectory Level Aggregation, it is possible that—even if information is accumulated sequentially—the system fails to perfectly merge the rollout logs into a single training sample (reasons detailed in Section 3).
 
 Agent Lightning provides a **Debug Mode** to monitor this stability.
 
@@ -102,7 +101,7 @@ Agent Lightning provides a **Debug Mode** to monitor this stability.
 
 ## 3. Trace Merging Failures: A Deep Dive
 
-The primary obstacle in implementing Trajectory Mode is the failure of **Prefix Matching** during the Trace Merging stage. Ideally, we would locate the agent's response within the full conversation by matching the token sequence generated during inference.
+The primary obstacle in implementing Trajectory Level Aggregation is the failure of **Prefix Matching** during the Trace Merging stage. Ideally, we would locate the agent's response within the full conversation by matching the token sequence generated during inference.
 
 However, in practice, the token IDs stored during the rollout (inference) often do not match the token IDs produced when the full history is re-tokenized for training. This is because the mapping from `String` $\to$ `Token IDs` is not bijective; it is context-dependent. The cycle of **ID (Generation) $\to$ String (Detokenization) $\to$ ID (Retokenization)** introduces drift.
 
@@ -147,7 +146,7 @@ When responses are concatenated with subsequent prompts, the tokenizer may merge
 
 ### 3.3 Message Formatting and Structural Alignment (Others Mismatch)
 
-A critical failure point in Trajectory Mode occurs when the agent logic appends response content directly to a raw string. This practice often disrupts the Chat Template's structural markers, leading to a mismatch between the inference rollout and the training prompt.
+A critical failure point in Trajectory Level Aggregation occurs when the agent logic appends response content directly to a raw string. This practice often disrupts the Chat Template's structural markers, leading to a mismatch between the inference rollout and the training prompt.
 
 **Original Implementation: Manual String Concatenation**
 In the example below, response content is directly added to a string. This bypasses the Chat Template for intermediate turns, causing the "Role" headers to disappear or become misaligned.
@@ -226,7 +225,7 @@ Minor artifacts often invisible in standard string views can cause drift.
 
 ## 4. Best Practices & Recommendations
 
-To successfully implement Trajectory Mode and minimize data loss during training, we recommend adhering to the following guidelines:
+To successfully implement Trajectory Level Aggregation and minimize data loss during training, we recommend adhering to the following guidelines:
 
 1. **Maintain Structured Conversations:** Always process turns using a cumulative message format (a list of role/content dictionaries) rather than raw string concatenation. This ensures that chat template headers remain consistent across the entire trajectory. For a practical example, please refer to the recommended implementation in **[Section 3.3](#33-message-formatting-and-structural-alignment-others-mismatch)**.
 2. **Configure Lengths for Cumulative Data:** Ensure `trajectory_max_prompt_length` and `trajectory_max_response_length` are sufficient to hold the *sum* of all turns in a session. Undersizing these will lead to truncation and invalid trajectories.
